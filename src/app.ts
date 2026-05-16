@@ -1,7 +1,7 @@
 import express from "express";
 import type {Request, Response} from "express";
-import rateController from "./controller/rateController.ts";
-import testController from "./controller/testController.ts";
+import rateController from "./controller/rate-controller.ts";
+import testController from "./controller/test-controller.ts";
 import { environmentValues } from "./environment.ts";
 
 const app = express();
