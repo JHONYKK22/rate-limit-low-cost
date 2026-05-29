@@ -1,7 +1,7 @@
 import express from "express";
 import type {Request, Response} from "express";
 
-import { redisService } from "../utils/redis-service.ts";
+import { rateLimitService } from "../utils/ratelimit-service.ts";
 
 
 
@@ -21,7 +21,7 @@ router.get("/value-info", async (req: Request<{}, {}, {}, SearchQueryParams>, re
 
   let value:string = req.query.value ?? "";
 
-  const data = await redisService.getValueInfo(value);
+  const data = await rateLimitService.getValueInfo(value);
 
   res.send({ data });
 
@@ -49,7 +49,7 @@ async function create(value:string, res:Response): Promise<Response> {
 
   if (!value || value === "") return res.send({ msg: "INVALID_VALUE" });
 
-  const wasUpdated = await redisService.updateValue(value);
+  const wasUpdated = await rateLimitService.updateValue(value);
 
   return res.send({ allowed: wasUpdated });
 

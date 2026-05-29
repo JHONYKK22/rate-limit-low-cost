@@ -1,7 +1,7 @@
 import { environmentValues } from "../../environment.ts";
 
 import { connection } from "../../lib/db-connection/connection.ts";
-import { RedisService } from "../../lib/service/service.ts";
+import { RateLimitService } from "../../lib/service/service.ts";
 
 
 
@@ -14,7 +14,7 @@ const redisClient = await connection(
 
 
 
-export const redisService = new RedisService(redisClient);
+export const rateLimitService = new RateLimitService(redisClient);
 /*
 export const redisService = new RedisService(redisClient, 
     environmentValues.LIMIT_CALLS, 

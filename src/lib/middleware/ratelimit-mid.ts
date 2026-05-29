@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
-import type { RedisService } from "../service/service.ts";
+import type { RateLimitService } from "../service/service.ts";
 
 type RateLimitOptions = {
   path?: string;
   prefix?: string;
-  service: RedisService;
+  service: RateLimitService;
 };
 
 

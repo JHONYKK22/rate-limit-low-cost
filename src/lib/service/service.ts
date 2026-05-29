@@ -1,7 +1,7 @@
 import type { RedisClientType } from "redis";
 
 
-export class RedisService {
+export class RateLimitService {
 
   readonly redisClient: RedisClientType;
   readonly LIMIT_CALLS:number;
