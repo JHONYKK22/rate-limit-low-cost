@@ -1,6 +1,6 @@
 import express from "express";
 import type {Request, Response} from "express";
-import { getValueInfo, updateValue } from "../service/service.ts";
+import { getValueInfo, updateValue } from "../../lib/service/service.ts";
 
 const router = express.Router();
 

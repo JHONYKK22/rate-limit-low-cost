@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { environmentValues } from '../environment.ts';
+import { environmentValues } from '../../environment.ts';
 
 const client = createClient({
     username: environmentValues.REDIS_USERNAME,

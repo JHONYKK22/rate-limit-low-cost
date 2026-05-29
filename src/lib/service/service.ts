@@ -1,3 +1,4 @@
+import { environmentValues } from "../../environment.ts";
 import { connection } from "../db-connection/connection.ts";
 
 export const getValueInfo = async(value: string): Promise<any> => {
@@ -25,8 +26,6 @@ export const getValueInfo = async(value: string): Promise<any> => {
 
 }
 
-const LIMIT_CALLS = 30;
-const EXPIRATION_TIME_IN_SECONDS = 60;
 
 export const updateValue = async(value: string):Promise<boolean> => {
     
@@ -41,8 +40,8 @@ export const updateValue = async(value: string):Promise<boolean> => {
 
     const currentCalls:number = parseToNumber(currentCallsString)
 
-    if (currentCalls >= LIMIT_CALLS) {
-      redisConnection.expire(value, EXPIRATION_TIME_IN_SECONDS);
+    if (currentCalls >= environmentValues.LIMIT_CALLS) {
+      redisConnection.expire(value, environmentValues.EXPIRATION_TIME_IN_SECONDS);
       return false;
     }
 
@@ -50,7 +49,7 @@ export const updateValue = async(value: string):Promise<boolean> => {
     const result = await redisConnection
     .multi()
     .incr(value)
-    .expire(value, EXPIRATION_TIME_IN_SECONDS)
+    .expire(value, environmentValues.EXPIRATION_TIME_IN_SECONDS)
     .exec()
     ;
 

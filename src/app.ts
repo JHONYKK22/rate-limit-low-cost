@@ -1,13 +1,21 @@
 import express from "express";
 import type {Request, Response} from "express";
-import rateController from "./controller/rate-controller.ts";
-import testController from "./controller/test-controller.ts";
+import rateController from "./app/controller/rate-controller.ts";
+import testController from "./app/controller/test-controller.ts";
 import { environmentValues } from "./environment.ts";
 
 const app = express();
 const port = environmentValues.PORT;
 
-app.set("trust proxy", true);
+// If you trust in all proxies.
+//app.set("trust proxy", true);
+
+// if you don't trust in any proxy.
+//app.set("trust proxy", false);
+
+// if you trust in only one proxy. Prod
+app.set("trust proxy", 1);
+
 app.use(express.json());
 
 
@@ -23,12 +31,9 @@ app.use(testController.path, testController.router)
 
 
 app.get("/", (req: Request, res: Response) => {
-  res.send({ message: "Hello World" });
+  res.send({ message: "Hello to this low cost rate limiter :) " });
 });
 
-app.get("/port", (req: Request, res: Response) => {
-  res.send({ message: `Hello World from port ${port}` });
-});
 
 
 app.listen(port, () => {
