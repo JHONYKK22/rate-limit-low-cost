@@ -3,6 +3,9 @@ import type {Request, Response} from "express";
 
 const router = express.Router();
 
+// TODO
+//create the decorator for the rate limit
+//@ratelimit()
 router.get("/", (req:Request, res:Response) => {
     res.json({
         ip: req.ip,
@@ -11,6 +14,9 @@ router.get("/", (req:Request, res:Response) => {
     })
 })
 
+// TODO
+//create the decorator for the rate limit
+//@ratelimit()
 router.get("/info", (req:Request, res:Response) => {
     res.json({
         info: "info",
