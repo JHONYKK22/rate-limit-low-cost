@@ -1,62 +1,55 @@
 import express from "express";
 import type {Request, Response} from "express";
-import { connection } from '../db-connection/connection.ts';
-import { createValue } from "../service/service.ts";
+import { getValueInfo, updateValue } from "../service/service.ts";
 
 const router = express.Router();
 
+
+
+router.get("/value-info", async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response) => {
+
+  let value:string = req.query.value ?? "";
+
+  const data = await getValueInfo(value);
+
+  res.send({ data });
+
+});
+
+
 interface SearchQueryParams {
-  msg?: string;  
+  value: string;  
 }
+
+interface CreateValueDTO {
+  value: string;  
+}
+
 
 router.get("/create", async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response) => {
 
-  return await createValue(req, res);
-});
-
-
-router.get("/get-value", async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response) => {
-
-  let msg:string = req.query.msg ?? "";
-  const redisConnection = await connection();
-
-  const result = await redisConnection.get(msg);
-
-  console.log("result redis");
-  console.log(result);
-
-  res.send({ message: `result -> ${result}` });
+  let value:string = req.query.value ?? "";
+  return await create(value, res);
 
 });
 
+router.post("/create", async (req: Request<{}, {}, CreateValueDTO, {}>, res: Response) => {
 
-router.get("/increment", async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response) => {
-
-  let msg:string = req.query.msg ?? "";
-  if(!msg) {
-    res.send({ message: "msg query param is required" });
-    return;
-  }
-
-  const redisConnection = await connection();
-
-  const exist = await redisConnection.get(msg);
-  
-  if(!exist) {
-    console.log("Entra");
-    
-    await redisConnection.set(msg, 0);
-  }
-
-  const result = await redisConnection.incr(msg);
-
-  console.log("result redis");
-  console.log(msg);
-  console.log(result);
-
-  res.send({ message: `result -> ${result}` });
+  let value:string = req.body.value ?? "";
+  return await create(value, res);
 
 });
+
+async function create(value:string, res:Response): Promise<Response> {
+
+  if (!value || value === "") return res.send({ msg: "INVALID_VALUE" });
+
+  const wasUpdated = await updateValue(value);
+
+  return res.send({ allowed: wasUpdated });
+
+}
+
 
 
 export default {
