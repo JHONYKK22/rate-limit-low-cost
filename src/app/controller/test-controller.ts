@@ -56,6 +56,3 @@ export default {
     path: "/test-rate",
     router
 }
-
-
-// crear el rate limit segun las configuraciones del archivo word, redis ya esta instalado
