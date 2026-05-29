@@ -39,7 +39,7 @@ export const updateValue = async(value: string):Promise<boolean> => {
     console.log(currentCallsString);
     console.log(ttl);
 
-    const currentCalls:number = parseRedisNumber(currentCallsString)
+    const currentCalls:number = parseToNumber(currentCallsString)
 
     if (currentCalls >= LIMIT_CALLS) {
       redisConnection.expire(value, EXPIRATION_TIME_IN_SECONDS);
@@ -60,7 +60,7 @@ export const updateValue = async(value: string):Promise<boolean> => {
     
 }
 
-function parseRedisNumber(value:string | null):number {
+function parseToNumber(value:string | null):number {
 
   if (value === null) return 0;
 
