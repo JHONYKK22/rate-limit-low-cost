@@ -46,6 +46,7 @@ export const updateValue = async(value: string):Promise<boolean> => {
       return false;
     }
 
+    // TODO: await
     const result = await redisConnection
     .multi()
     .incr(value)
