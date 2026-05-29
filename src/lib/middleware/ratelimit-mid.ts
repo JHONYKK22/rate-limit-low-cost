@@ -1,12 +1,16 @@
 import type { Request, Response, NextFunction } from "express";
-import { updateValue } from "../service/service.ts";
+import type { RedisService } from "../service/service.ts";
 
 type RateLimitOptions = {
   path?: string;
   prefix?: string;
+  service: RedisService;
 };
 
-export function ratelimit(options?: RateLimitOptions) { 
+
+export function ratelimit(options: RateLimitOptions) { 
+
+    const service = options.service;
     
     return async function (req:Request, res:Response, next:NextFunction) {
 
@@ -28,7 +32,7 @@ export function ratelimit(options?: RateLimitOptions) {
 
     console.log({data});
 
-    const allowed:boolean = await updateValue(data.ip);
+    const allowed:boolean = await service.updateValue(data.ip);
 
     if(!allowed) {
         return res.status(429).send({

@@ -1,17 +1,22 @@
 import { createClient } from 'redis';
-import { environmentValues } from '../../environment.ts';
 
-const client = createClient({
-    username: environmentValues.REDIS_USERNAME,
-    password: environmentValues.REDIS_PASSWORD,
-    socket: {
-        host: environmentValues.REDIS_HOST,
-        port: environmentValues.REDIS_PORT
-    }
-});
+export async function createRedisClient(username: string, password: string, host: string, port: number) {
 
-client.on('error', err => console.log('Redis Client Error', err));
+    const client = createClient({
+        username:username,
+        password: password,
+        socket: {
+            host: host,
+            port: port
+        }
+    });
 
-await client.connect();
+  client.on("error", (err) => {
+    console.error("Redis error:", err);
+  });
 
-export default client;
+  await client.connect();
+
+  return client;
+  
+}

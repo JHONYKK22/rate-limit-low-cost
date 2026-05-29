@@ -1,70 +1,83 @@
-import { environmentValues } from "../../environment.ts";
-import { connection } from "../db-connection/connection.ts";
+import type { RedisClientType } from "redis";
 
-export const getValueInfo = async(value: string): Promise<any> => {
-    
-  const redisConnection = await connection();
 
-  const [redisKey, ttl, type] = await Promise.all([
-    redisConnection.get(value),
-    redisConnection.ttl(value),
-    redisConnection.type(value),
-  ]);
+export class RedisService {
 
-  if (!redisKey) return "NO_VALUE";
+  readonly redisClient: RedisClientType;
+  readonly LIMIT_CALLS:number;
+  readonly EXPIRATION_TIME_IN_SECONDS:number;
 
-  const result = {
-    key: {
-      name: redisKey,
-      value
-    },
-    ttl,
-    type,
+  constructor(client: RedisClientType, limitCalls?:number, expirationTimeInSeconds?:number) {
+
+    this.redisClient = client;
+    this.LIMIT_CALLS=limitCalls ?? 30;
+    this.EXPIRATION_TIME_IN_SECONDS = expirationTimeInSeconds ?? 60;
+
   }
+
+  async getValueInfo (value: string): Promise<any> {
     
-  return result;
-
-}
-
-
-export const updateValue = async(value: string):Promise<boolean> => {
-    
-    const redisConnection = await connection();
-    const [currentCallsString, ttl] = await Promise.all([
-      redisConnection.get(value),
-      redisConnection.ttl(value),
+    const [redisKey, ttl, type] = await Promise.all([
+      this.redisClient.get(value),
+      this.redisClient.ttl(value),
+      this.redisClient.type(value),
     ]);
 
-    console.log(currentCallsString);
-    console.log(ttl);
+    if (!redisKey) return "NO_VALUE";
 
-    const currentCalls:number = parseToNumber(currentCallsString)
-
-    if (currentCalls >= environmentValues.LIMIT_CALLS) {
-      redisConnection.expire(value, environmentValues.EXPIRATION_TIME_IN_SECONDS);
-      return false;
+    const result = {
+      key: {
+        name: redisKey,
+        value
+      },
+      ttl,
+      type,
     }
-
-    // TODO: await
-    const result = await redisConnection
-    .multi()
-    .incr(value)
-    .expire(value, environmentValues.EXPIRATION_TIME_IN_SECONDS)
-    .exec()
-    ;
-
-    console.log(result)
-
-    return true;
     
-}
+    return result;
 
-function parseToNumber(value:string | null):number {
+  }
 
-  if (value === null) return 0;
 
-  const num = Number(value);
+  async updateValue(value: string):Promise<boolean> {
+      
+      const [currentCallsString, ttl] = await Promise.all([
+        this.redisClient.get(value),
+        this.redisClient.ttl(value),
+      ]);
 
-  return Number.isNaN(num) ? 0 : num;
+      console.log(currentCallsString);
+      console.log(ttl);
+
+      const currentCalls:number = this.parseToNumber(currentCallsString)
+
+      if (currentCalls >= this.LIMIT_CALLS) {
+        this.redisClient.expire(value, this.EXPIRATION_TIME_IN_SECONDS);
+        return false;
+      }
+
+      // TODO: await
+      const result = await this.redisClient
+      .multi()
+      .incr(value)
+      .expire(value, this.EXPIRATION_TIME_IN_SECONDS)
+      .exec()
+      ;
+
+      console.log(result)
+
+      return true;
+      
+  }
+
+  private parseToNumber(value:string | null):number {
+
+    if (value === null) return 0;
+
+    const num = Number(value);
+
+    return Number.isNaN(num) ? 0 : num;
+
+  }
 
 }

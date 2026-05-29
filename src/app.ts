@@ -1,11 +1,15 @@
 import express from "express";
 import type {Request, Response} from "express";
+
+import { environmentValues } from "./environment.ts";
+
 import rateController from "./app/controller/rate-controller.ts";
 import testController from "./app/controller/test-controller.ts";
-import { environmentValues } from "./environment.ts";
+
 
 const app = express();
 const port = environmentValues.PORT;
+
 
 // If you trust in all proxies.
 //app.set("trust proxy", true);
@@ -17,7 +21,6 @@ const port = environmentValues.PORT;
 app.set("trust proxy", 1);
 
 app.use(express.json());
-
 
 
 app.use(rateController.path, rateController.router)

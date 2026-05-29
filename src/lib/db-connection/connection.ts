@@ -1,8 +1,8 @@
-import client from "../redis/redis-client.ts";
+import type { RedisClientType } from "redis";
+import { createRedisClient } from "../redis/redis-client.ts";
 
+export const connection = async(username: string, password: string, host: string, port: number): Promise<RedisClientType> => {
 
-export const connection = async() => {
-
-    return client;
+    return await createRedisClient(username, password, host, port);
 
 }

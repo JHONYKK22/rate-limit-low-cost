@@ -1,29 +1,34 @@
 import express from "express";
 import type {Request, Response} from "express";
-import { getValueInfo, updateValue } from "../../lib/service/service.ts";
+
+import { redisService } from "../utils/redis-service.ts";
+
+
 
 const router = express.Router();
 
+
+
+interface SearchQueryParams {
+  value: string;  
+}
+interface CreateValueDTO {
+  value: string;  
+}
 
 
 router.get("/value-info", async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response) => {
 
   let value:string = req.query.value ?? "";
 
-  const data = await getValueInfo(value);
+  const data = await redisService.getValueInfo(value);
 
   res.send({ data });
 
 });
 
 
-interface SearchQueryParams {
-  value: string;  
-}
 
-interface CreateValueDTO {
-  value: string;  
-}
 
 
 router.get("/create", async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response) => {
@@ -44,7 +49,7 @@ async function create(value:string, res:Response): Promise<Response> {
 
   if (!value || value === "") return res.send({ msg: "INVALID_VALUE" });
 
-  const wasUpdated = await updateValue(value);
+  const wasUpdated = await redisService.updateValue(value);
 
   return res.send({ allowed: wasUpdated });
 
