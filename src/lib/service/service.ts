@@ -41,32 +41,32 @@ export class RedisService {
 
   async updateValue(value: string):Promise<boolean> {
       
-      const [currentCallsString, ttl] = await Promise.all([
-        this.redisClient.get(value),
-        this.redisClient.ttl(value),
-      ]);
+    const [currentCallsString, ttl] = await Promise.all([
+      this.redisClient.get(value),
+      this.redisClient.ttl(value),
+    ]);
 
-      console.log(currentCallsString);
-      console.log(ttl);
+    console.log(currentCallsString);
+    console.log(ttl);
 
-      const currentCalls:number = this.parseToNumber(currentCallsString)
+    const currentCalls:number = this.parseToNumber(currentCallsString)
 
-      if (currentCalls >= this.LIMIT_CALLS) {
-        this.redisClient.expire(value, this.EXPIRATION_TIME_IN_SECONDS);
-        return false;
-      }
+    if (currentCalls >= this.LIMIT_CALLS) {
+      this.redisClient.expire(value, this.EXPIRATION_TIME_IN_SECONDS);
+      return false;
+    }
 
-      // TODO: await
-      const result = await this.redisClient
-      .multi()
-      .incr(value)
-      .expire(value, this.EXPIRATION_TIME_IN_SECONDS)
-      .exec()
-      ;
+    // TODO: await
+    const result = await this.redisClient
+    .multi()
+    .incr(value)
+    .expire(value, this.EXPIRATION_TIME_IN_SECONDS)
+    .exec()
+    ;
 
-      console.log(result)
+    console.log(result)
 
-      return true;
+    return true;
       
   }
 
