@@ -15,10 +15,10 @@ const port = environmentValues.PORT;
 //app.set("trust proxy", true);
 
 // if you don't trust in any proxy.
-//app.set("trust proxy", false);
+app.set("trust proxy", false);
 
 // if you trust in only one proxy. Prod
-app.set("trust proxy", 1);
+//app.set("trust proxy", 1);
 
 app.use(express.json());
 
