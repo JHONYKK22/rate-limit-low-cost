@@ -24,11 +24,7 @@ app.use(express.json());
 
 
 app.use(rateController.path, rateController.router)
-
-
-
 app.use(testController.path, testController.router)
-
 
 
 
